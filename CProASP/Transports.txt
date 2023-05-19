@@ -1,0 +1,5 @@
+1, car, 120, 1200, go
+2, boat, 0, 12000, stop
+3, train, 60, 10000, go
+4, plain, 360, 23000, fly
+5, car, 0, 2300, stop
