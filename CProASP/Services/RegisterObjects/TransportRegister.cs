@@ -5,6 +5,7 @@ namespace CProASP.Services.RegisterObjects
 {
     public class TransportRegister : ITransportRegister
     {
+        // ОСНОВНІЕ ИЗМИНЕНИЯ 
         protected readonly List<IBaseTranspoert> transpoertList = new List<IBaseTranspoert>();
         public void AddTransport(IBaseTranspoert transpot)
         {
