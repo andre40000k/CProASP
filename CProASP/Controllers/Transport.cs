@@ -1,8 +1,6 @@
-﻿using CProASP.MiniDateBase;
+﻿using CProASP.Interfaces.ServicesInterface;
 using CProASP.Transport;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System;
 
 namespace CProASP.Controllers
 {
@@ -10,27 +8,31 @@ namespace CProASP.Controllers
     [ApiController]
     public class TransportController : ControllerBase
     {
-        public static List<BaseTransport> Transports { get; set; } = new List<BaseTransport> { };
-        public static int samecheck = 0;
+        //public static List<BaseTransport> Transports { get; set; } = new List<BaseTransport> { };
+        //public static int samecheck = 0;
+
+        private readonly ITransportRegister _transportRegister;
+        private readonly ITransportChang _transportChang;
+        public TransportController(ITransportRegister transportRegister,
+            ITransportChang transportChang)
+        {
+            _transportRegister = transportRegister;
+            _transportChang = transportChang;
+        }
+
 
         [HttpGet]
-        public ActionResult<List<BaseTransport>> Getvalue()
+        public ActionResult Getvalue()
         {
-            if(samecheck == 0)
-            {
-                samecheck = 1;
-                Transports = GetDateBase.ReadFile();
-            }
+            if (_transportChang.CountList() == 0) return NotFound(new { Code = 404, Date = "The list is empety" });
 
-            if (Transports.Count == 0) return NotFound(new { Code = 404, Date = "The list is empety" });
-               
-            return Ok(new { Code = 200, Date = Transports });
+            return Ok(new { Code = 200, Date = _transportRegister.GetTranspoert() });
         }
 
         [HttpGet("{id}")]
-        public ActionResult<BaseTransport?> GetPeople(int id)
-        {      
-            var obj = Transports.FirstOrDefault(x => x.Id == id);
+        public ActionResult GetPeople(int id)
+        {
+            var obj = _transportRegister.GetTranspoert(id);
             if (obj == null)
                 return BadRequest(400);
 
@@ -38,24 +40,20 @@ namespace CProASP.Controllers
         }
 
         [HttpPost]
-        public ActionResult<BaseTransport> AddTransport([FromBody] BaseTransporRequest request)
+        public ActionResult AddTransport([FromBody] BaseTransporRequest request)
         {
-            var transport = new BaseTransport
-            {
-                Id = Transports.Count + 1,
-                Type = request.Type,
-                Speed = request.Speed,
-                Weight = request.Weight,
-                Status = request.Status
-            };
-            Transports.Add(transport);
+            var transport = new BaseTransport(100, request.Type,
+                request.Weight, request.Speed, request.Status);
+
+            _transportRegister.AddTransport(transport);
             return new OkObjectResult(transport);
         }
 
         [HttpPut("{id}")]
         public ActionResult<BaseTransport?> ChangTransport(int id, [FromBody] BaseTransporRequest request)
         {
-            var changTransport =  Transports.FirstOrDefault(x => x.Id == id);
+            var changTransport = _transportRegister.GetTranspoert(id);
+
             if (changTransport == null) return NotFound(404);
 
             changTransport.Type = request.Type;
@@ -69,9 +67,8 @@ namespace CProASP.Controllers
         [HttpDelete("{id}")]
         public ActionResult DeleteTransport(int id)
         {
-            var removeTransport = Transports.FirstOrDefault(x => x.Id == id);
-            if (removeTransport == null) return NotFound(new { Code = 404, Date = "The object not found or deleted earlier" });
-            Transports.Remove(removeTransport);
+
+            _transportChang.RemoveTransport(id);
             return Ok(200);
         }
     }
