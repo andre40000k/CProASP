@@ -1,6 +1,8 @@
+using CProASP.Interfaces.BaseInterfaces;
 using CProASP.Interfaces.ServicesInterface;
 using CProASP.Services.RegisterObjects;
 using CProASP.Services.RegisterObjects.ChangObjects;
+using CProASP.Transport;
 
 namespace CProASP
 {
@@ -39,6 +41,29 @@ namespace CProASP
 
 
             app.MapControllers();
+            app.MapGet("/v2/Transport/{id}",
+                (HttpContext requstDelegate, int id) =>
+                {
+                    var check = int.TryParse(requstDelegate.GetRouteValue("id")!.ToString(), out id);
+                    if (check == false) return Results.BadRequest("Only numbers!!!");
+                    var service = requstDelegate.RequestServices.GetService<ITransportRegister>();
+                    var transport = service.GetTranspoert(id);
+                    if (transport == null) return Results.BadRequest("No content");
+                    return Results.Ok(transport);
+
+                })
+                .WithName("Test")
+                .WithOpenApi();
+
+            app.MapPost("/v3/AddTransport/{baseTransport}",
+               (HttpContext requstDelegate, BaseTransport baseTransport) =>
+               {
+                   var service = requstDelegate.RequestServices.GetService<ITransportRegister>();
+                   service.AddTransport(baseTransport);
+                   return Results.Ok();
+               })
+               .WithName("Test1")
+               .WithOpenApi();
 
             app.Run();
         }
