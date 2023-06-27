@@ -2,12 +2,15 @@
 using CProASP.Transport;
 using CProASP.MiniDateBase;
 using Microsoft.AspNetCore.Mvc;
+using CProASP.Filter;
 
 namespace CProASP.Controllers
 {
     // ОСНОВНЫЕ ИЗМИНЕНИЯ 
     [Route("api/[controller]")]
     [ApiController]
+    [LogFilter]
+    [ResourceFilter]
     public class TransportGetAddController : ControllerBase
     {
         private readonly ITransportRegister _transportRegister;

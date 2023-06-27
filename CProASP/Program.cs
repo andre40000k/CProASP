@@ -39,11 +39,30 @@ namespace CProASP
 
             app.UseAuthorization();
 
+            app.Use(async (contex, next) =>
+            {
+                try
+                {
+                    Console.WriteLine("Body of reqest: {0}", contex.Request.Body.ToString());
+                    await next();
+                    Console.WriteLine("Underlying conection: {0}", contex.Connection.ToString());
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Message: {0}\n" +
+                        "Date: {1}\n" +
+                        "Stack: {2}",
+                        ex.Message, ex.Data, ex.StackTrace);
+                }
+                
+            });
 
             app.MapControllers();
+
             app.MapGet("/v2/Transport/{id}",
                 (HttpContext requstDelegate, int id) =>
                 {
+                    throw new NotImplementedException();
                     var check = int.TryParse(requstDelegate.GetRouteValue("id")!.ToString(), out id);
                     if (check == false) return Results.BadRequest("Only numbers!!!");
                     var service = requstDelegate.RequestServices.GetService<ITransportRegister>();
@@ -66,6 +85,7 @@ namespace CProASP
                .WithOpenApi();
 
             app.Run();
+
         }
     }
 }
