@@ -4,16 +4,15 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CProASP.Controllers
 {
+    // 
     [Route("api/[controller]")]
     [ApiController]
     public class TransportController : ControllerBase
     {
-        //public static List<BaseTransport> Transports { get; set; } = new List<BaseTransport> { };
-        //public static int samecheck = 0;
-
-        private readonly ITransportRegister _transportRegister;
+        private readonly ITransportService _transportRegister;
         private readonly ITransportChang _transportChang;
-        public TransportController(ITransportRegister transportRegister,
+
+        public TransportController(ITransportService transportRegister,
             ITransportChang transportChang)
         {
             _transportRegister = transportRegister;
@@ -26,7 +25,7 @@ namespace CProASP.Controllers
         {
             if (_transportChang.CountList() == 0) return NotFound(new { Code = 404, Date = "The list is empety" });
 
-            return Ok(new { Code = 200, Date = _transportRegister.GetTranspoert() });
+            return Ok(/*new { Code = 200, Date = _transportRegister.GetTranspoert() }*/);
         }
 
         [HttpGet("{id}")]
