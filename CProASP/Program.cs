@@ -1,8 +1,12 @@
 using CProASP.Interfaces.BaseInterfaces;
+using CProASP.Interfaces.RepositoryInterface;
 using CProASP.Interfaces.ServicesInterface;
+using CProASP.MiniDateBase.EFCore;
+using CProASP.Repository;
 using CProASP.Services.RegisterObjects;
 using CProASP.Services.RegisterObjects.ChangObjects;
 using CProASP.Transport;
+using Microsoft.EntityFrameworkCore;
 
 namespace CProASP
 {
@@ -12,7 +16,13 @@ namespace CProASP
         {            
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
+
+            builder.Services.AddDbContext<ApplicationContext>(options =>
+            {
+                options.UseSqlServer("Data Source=DESKTOP-HRJDSGA\\WINCC;Database=CProASP;Trusted_Connection=True;Integrated Security=true;TrustServerCertificate=True");
+            });
+
+            // DESKTOP-HRJDSGA\WINCC CProASP
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -20,10 +30,11 @@ namespace CProASP
             builder.Services.AddSwaggerGen();
 
 
-            builder.Services.AddSingleton<ITransportRegister, TransportRegister>();
+            builder.Services.AddTransient<ITransportService, TransportService>();
+            builder.Services.AddTransient<ITransportRepository, DataBaseTransportRepository>();
             //builder.Services.AddSingleton<ITransportAdd, TransportAdd>();
             //builder.Services.AddSingleton<ITransportGet, TransportGet>();
-            builder.Services.AddTransient<ITransportChang, TransportChang>();
+            //builder.Services.AddTransient<ITransportChang, TransportChang>();
 
 
             var app = builder.Build();
@@ -65,7 +76,7 @@ namespace CProASP
                     throw new NotImplementedException();
                     var check = int.TryParse(requstDelegate.GetRouteValue("id")!.ToString(), out id);
                     if (check == false) return Results.BadRequest("Only numbers!!!");
-                    var service = requstDelegate.RequestServices.GetService<ITransportRegister>();
+                    var service = requstDelegate.RequestServices.GetService<ITransportService>();
                     var transport = service.GetTranspoert(id);
                     if (transport == null) return Results.BadRequest("No content");
                     return Results.Ok(transport);
@@ -77,7 +88,7 @@ namespace CProASP
             app.MapPost("/v3/AddTransport/{baseTransport}",
                (HttpContext requstDelegate, BaseTransport baseTransport) =>
                {
-                   var service = requstDelegate.RequestServices.GetService<ITransportRegister>();
+                   var service = requstDelegate.RequestServices.GetService<ITransportService>();
                    service.AddTransport(baseTransport);
                    return Results.Ok();
                })

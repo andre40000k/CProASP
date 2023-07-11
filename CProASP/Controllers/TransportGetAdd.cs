@@ -13,9 +13,9 @@ namespace CProASP.Controllers
     [ResourceFilter]
     public class TransportGetAddController : ControllerBase
     {
-        private readonly ITransportRegister _transportRegister;
+        private readonly ITransportService _transportRegister;
 
-        public TransportGetAddController(ITransportRegister transportRegister)
+        public TransportGetAddController(ITransportService transportRegister)
         {
             _transportRegister = transportRegister;
         }
@@ -24,7 +24,7 @@ namespace CProASP.Controllers
         public ActionResult AddTransport(BaseTransport baseTransport)
         {
             _transportRegister.AddTransport(baseTransport);
-            return Ok(_transportRegister.TransportCount());
+            return Ok(/*_transportRegister.TransportCount()*/);
         }
 
         [HttpGet("Id")]
@@ -33,7 +33,7 @@ namespace CProASP.Controllers
             var transport = GetDateBase.ReadFile(id);
             if (transport == null) { return BadRequest("Error!\n404"); }
             _transportRegister.AddTransport(transport);
-            return Ok(_transportRegister.TransportCount());
+            return Ok(/*_transportRegister.TransportCount()*/);
         }
 
 

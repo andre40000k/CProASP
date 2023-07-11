@@ -2,15 +2,15 @@
 
 namespace CProASP.Interfaces.ServicesInterface
 {
-    public interface ITransportRegister
+    public interface ITransportService
     {
         // ОСНОВНІЕ ИЗМИНЕНИЯ 
         void AddTransport(IBaseTranspoert transpot);
 
         IBaseTranspoert GetTranspoert(int id);
 
-        IBaseTranspoert GetTranspoert();
+        //IBaseTranspoert GetTranspoert();
 
-        int TransportCount();
+        //int TransportCount();
     }
 }
