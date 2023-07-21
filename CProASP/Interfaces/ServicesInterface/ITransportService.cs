@@ -1,13 +1,17 @@
 ﻿using CProASP.Interfaces.BaseInterfaces;
+using CProASP.Transport.Transport;
+using CProASP.Transport.TransportRequest;
 
 namespace CProASP.Interfaces.ServicesInterface
 {
     public interface ITransportService
     {
         // ОСНОВНІЕ ИЗМИНЕНИЯ 
-        void AddTransport(IBaseTranspoert transpot);
+        void AddTransport(BaseTransport transpot);
 
-        IBaseTranspoert GetTranspoert(int id);
+        BaseTransport GetTranspoert(int id);
+
+        bool UpdateTransport(int id, BaseTransportRequest baseTransportRequest);
 
         //IBaseTranspoert GetTranspoert();
 

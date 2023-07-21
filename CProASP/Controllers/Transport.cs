@@ -1,5 +1,6 @@
 ﻿using CProASP.Interfaces.ServicesInterface;
-using CProASP.Transport;
+using CProASP.Transport.Transport;
+using CProASP.Transport.TransportRequest;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CProASP.Controllers
@@ -38,18 +39,18 @@ namespace CProASP.Controllers
             return Ok(obj);
         }
 
-        [HttpPost]
-        public ActionResult AddTransport([FromBody] BaseTransporRequest request)
-        {
-            var transport = new BaseTransport(100, request.Type,
-                request.Weight, request.Speed, request.Status);
+        //[HttpPost]
+        //public ActionResult AddTransport([FromBody] BaseTransporRequest request)
+        //{
+        //    var transport = new BaseTransport(100, request.Type,
+        //        request.Weight, request.Speed, request.Status);
 
-            _transportRegister.AddTransport(transport);
-            return new OkObjectResult(transport);
-        }
+        //    _transportRegister.AddTransport(transport);
+        //    return new OkObjectResult(transport);
+        //}
 
         [HttpPut("{id}")]
-        public ActionResult<BaseTransport?> ChangTransport(int id, [FromBody] BaseTransporRequest request)
+        public ActionResult<BaseTransport?> ChangTransport(int id, [FromBody] BaseTransportRequest request)
         {
             var changTransport = _transportRegister.GetTranspoert(id);
 

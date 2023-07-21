@@ -1,27 +1,38 @@
 ﻿using CProASP.Interfaces.BaseInterfaces;
 using CProASP.Interfaces.RepositoryInterface;
 using CProASP.MiniDateBase.EFCore;
-using CProASP.Transport;
+using CProASP.Transport.Transport;
+using Microsoft.EntityFrameworkCore;
 
 namespace CProASP.Repository
 {
     public class DataBaseTransportRepository : ITransportRepository
     {
-        public ApplicationContext DbContext { get;}
+        private readonly ApplicationContext _context /*DbContext{ get;}*/;
 
         public DataBaseTransportRepository(ApplicationContext context)
         {
-            DbContext = context;
+            _context = context;
+            
         }
-        public void AddTransport(IBaseTranspoert transpot)
+        public void AddTransport(BaseTransport transpot)
         {
-           DbContext.Transport.Add((BaseTransport)transpot);
-           DbContext.SaveChanges();
+            
+            _context.Transport.Add(transpot);
+            _context.SaveChanges();
         }
 
-        public IBaseTranspoert GetTranspoert(int id)
+        public BaseTransport? GetTranspoert(int id)
         {
-            return DbContext.Transport.FirstOrDefault(x => x.Id == id);
+            return _context.Transport
+                .Include(x => x.Cargos)
+                .FirstOrDefault(x => x.Id == id);
+        }
+
+        public void UpDate(BaseTransport baseTransport)
+        {
+            _context.Transport.Update(baseTransport);
+            _context.SaveChanges();
         }
     }
 }

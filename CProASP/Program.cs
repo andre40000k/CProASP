@@ -5,7 +5,7 @@ using CProASP.MiniDateBase.EFCore;
 using CProASP.Repository;
 using CProASP.Services.RegisterObjects;
 using CProASP.Services.RegisterObjects.ChangObjects;
-using CProASP.Transport;
+using CProASP.Transport.Transport;
 using Microsoft.EntityFrameworkCore;
 
 namespace CProASP
@@ -16,19 +16,26 @@ namespace CProASP
         {            
             var builder = WebApplication.CreateBuilder(args);
 
+            builder
+                .Configuration
+                .AddUserSecrets<ApplicationContext>()                
+                .Build();
+
+            
 
             builder.Services.AddDbContext<ApplicationContext>(options =>
             {
-                options.UseSqlServer("Data Source=DESKTOP-HRJDSGA\\WINCC;Database=CProASP;Trusted_Connection=True;Integrated Security=true;TrustServerCertificate=True");
-            });
+                var conectionString = builder
+                .Configuration
+                .GetConnectionString("CProASP");
 
-            // DESKTOP-HRJDSGA\WINCC CProASP
+                options.UseSqlServer(conectionString);                
+            });
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
-
 
             builder.Services.AddTransient<ITransportService, TransportService>();
             builder.Services.AddTransient<ITransportRepository, DataBaseTransportRepository>();
@@ -39,6 +46,7 @@ namespace CProASP
 
             var app = builder.Build();
 
+          
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
