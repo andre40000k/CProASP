@@ -4,16 +4,23 @@ namespace CProASP.Filter
 {
     public class ResourceFilterAttribute : Attribute, IResourceFilter
     {
+        public ResourceFilterAttribute() { }
+        public ResourceFilterAttribute(ILogger<ResourceFilterAttribute> logger) 
+        {
+            Logger = logger;        
+        }
+
+        public ILogger Logger { get;}
         public void OnResourceExecuted(ResourceExecutedContext context)
         {
             string userCookies = context.HttpContext.Request.Cookies.ToString();
-            Console.WriteLine("user Cookies: {0}", userCookies);
+            Logger.LogInformation("user Cookies: {0}", userCookies);
         }
 
         public void OnResourceExecuting(ResourceExecutingContext context)
         {
             string userCookies =  context.HttpContext.Request.Cookies.Count.ToString();
-            Console.WriteLine("user Cookies: {0}", userCookies);
+            Logger.LogTrace("user Cookies: {0}", userCookies);
         }
     }
 }

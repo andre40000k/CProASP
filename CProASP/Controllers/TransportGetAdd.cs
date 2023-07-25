@@ -14,16 +14,21 @@ namespace CProASP.Controllers
     [ResourceFilter]
     public class TransportGetAddController : ControllerBase
     {
+        private readonly ILogger<TransportGetAddController> _logger;
         private readonly ITransportService _transportService;
 
-        public TransportGetAddController(ITransportService transportRegister)
+        public TransportGetAddController(
+            ITransportService transportRegister,
+            ILogger<TransportGetAddController> logger)
         {
             _transportService = transportRegister;
+            _logger = logger;
         }
 
         [HttpPost("add")]
         public ActionResult AddTransport(BaseTransport baseTransport)
         {
+            _logger.LogInformation("Add transport {0}", baseTransport.Type);
             _transportService.AddTransport(baseTransport);
             return Ok(/*_transportRegister.TransportCount()*/);
         }
@@ -50,6 +55,7 @@ namespace CProASP.Controllers
         [HttpGet]
         public ActionResult GetTransport(int id)
         {
+            _logger.LogInformation($"Get id {id} of the transport");
             var transport = _transportService.GetTranspoert(id);
             if (transport == null) { return BadRequest("Error!\n404"); }
             return Ok(transport);

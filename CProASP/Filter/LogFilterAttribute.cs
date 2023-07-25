@@ -4,9 +4,16 @@ namespace CProASP.Filter
 {
     public class LogFilterAttribute : Attribute, IActionFilter
     {
+        public LogFilterAttribute() { }
+        public LogFilterAttribute(ILogger<LogFilterAttribute> logger) 
+        {
+            Logger= logger;
+        }
+
+        public ILogger<LogFilterAttribute> Logger { get;}
         public void OnActionExecuted(ActionExecutedContext context)
         {
-            Console.WriteLine("Date of completion: {0}\n" +
+            Logger.LogTrace("Date of completion: {0}\n" +
                 "Path: {1}\n" +
                 "Method: {2}",
                 DateTime.Now, context.HttpContext.Request.Path,
@@ -15,7 +22,7 @@ namespace CProASP.Filter
 
         public void OnActionExecuting(ActionExecutingContext context)
         {
-            Console.WriteLine("Date start: {0}\n" +
+            Logger.LogInformation("Date start: {0}\n" +
                 "Path: {1}\n" +
                 "Method: {2}", 
                 DateTime.Now, context.HttpContext.Request.Path,
