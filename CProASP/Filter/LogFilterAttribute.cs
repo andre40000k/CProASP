@@ -4,7 +4,7 @@ namespace CProASP.Filter
 {
     public class LogFilterAttribute : Attribute, IActionFilter
     {
-        public LogFilterAttribute() { }
+        //public LogFilterAttribute() { }
         public LogFilterAttribute(ILogger<LogFilterAttribute> logger) 
         {
             Logger= logger;

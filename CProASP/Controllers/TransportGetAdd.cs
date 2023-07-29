@@ -1,17 +1,17 @@
 ﻿using CProASP.Interfaces.ServicesInterface;
-using CProASP.MiniDateBase;
 using Microsoft.AspNetCore.Mvc;
 using CProASP.Filter;
 using CProASP.Transport.Transport;
 using CProASP.Transport.TransportRequest;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CProASP.Controllers
 {
     // ОСНОВНЫЕ ИЗМИНЕНИЯ 
     [Route("api/[controller]")]
     [ApiController]
-    [LogFilter]
-    [ResourceFilter]
+    //[LogFilter]
+    //[ResourceFilter]
     public class TransportGetAddController : ControllerBase
     {
         private readonly ILogger<TransportGetAddController> _logger;
@@ -26,6 +26,7 @@ namespace CProASP.Controllers
         }
 
         [HttpPost("add")]
+        [Authorize(Roles = "User")]
         public ActionResult AddTransport(BaseTransport baseTransport)
         {
             _logger.LogInformation("Add transport {0}", baseTransport.Type);
@@ -34,6 +35,7 @@ namespace CProASP.Controllers
         }
 
         [HttpPut]
+        [Authorize(Roles = "Admin")]
         public ActionResult<BaseTransportRequest> ChangeTransport(int id, [FromBody] BaseTransportRequest baseTransportRequest)
         {
             bool check = _transportService.UpdateTransport(id, baseTransportRequest);
@@ -53,6 +55,7 @@ namespace CProASP.Controllers
 
 
         [HttpGet]
+        [Authorize]
         public ActionResult GetTransport(int id)
         {
             _logger.LogInformation($"Get id {id} of the transport");
