@@ -1,9 +1,11 @@
 ﻿using CProASP.Interfaces.ServicesInterface;
 using Microsoft.AspNetCore.Mvc;
-using CProASP.Filter;
 using CProASP.Transport.Transport;
 using CProASP.Transport.TransportRequest;
 using Microsoft.AspNetCore.Authorization;
+using FluentValidation.Results;
+using FluentValidation;
+using CProASP.Validations;
 
 namespace CProASP.Controllers
 {
@@ -16,19 +18,30 @@ namespace CProASP.Controllers
     {
         private readonly ILogger<TransportGetAddController> _logger;
         private readonly ITransportService _transportService;
+        private IValidator<BaseTransport> _validatorBase;
 
         public TransportGetAddController(
             ITransportService transportRegister,
-            ILogger<TransportGetAddController> logger)
+            ILogger<TransportGetAddController> logger,
+            IValidator<BaseTransport> validator)
         {
             _transportService = transportRegister;
             _logger = logger;
+            _validatorBase = validator;
         }
 
         [HttpPost("add")]
         [Authorize(Roles = "User")]
-        public ActionResult AddTransport(BaseTransport baseTransport)
+        public IActionResult AddTransport(BaseTransport baseTransport)
         {
+
+            ValidationResult results = _validatorBase.Validate(baseTransport);
+
+            if (!results.IsValid)
+            {
+                return BadRequest(results.Errors);
+            }
+
             _logger.LogInformation("Add transport {0}", baseTransport.Type);
             _transportService.AddTransport(baseTransport);
             return Ok(/*_transportRegister.TransportCount()*/);
@@ -36,13 +49,23 @@ namespace CProASP.Controllers
 
         [HttpPut]
         [Authorize(Roles = "Admin")]
-        public ActionResult<BaseTransportRequest> ChangeTransport(int id, [FromBody] BaseTransportRequest baseTransportRequest)
+        public async Task<IActionResult/*<BaseTransportRequest>*/> ChangeTransport(int id, [FromBody] BaseTransportRequest baseTransportRequest)
         {
+            //ValidationResult result = await _validator.ValidateAsync(baseTransportRequest);
+
+
+            //if (!result.IsValid)
+            //{
+            //    result.AddToModelState(this.ModelState);
+
+            //    return ("Create", baseTransportRequest);
+            //}
+
             bool check = _transportService.UpdateTransport(id, baseTransportRequest);
 
             if(!check) { return BadRequest("Error!\n404"); }
-
-            return Ok();
+            
+            return RedirectToAction("Index");
         }
         //[HttpGet("Id")]
         //public ActionResult GetTransportWithBase(int id)
