@@ -124,6 +124,7 @@ namespace CProASP
             builder.Services.AddTransient<ITransportService, TransportService>();
             builder.Services.AddTransient<ITransportRepository, DataBaseTransportRepository>();
             builder.Services.AddTransient<IValidator<BaseTransport>, TransportValidator>();
+            builder.Services.AddTransient<IValidator<BaseTransportRequest>, TransportReqestValidator>();
             //builder.Services.AddSingleton<ITransportAdd, TransportAdd>();
             //builder.Services.AddSingleton<ITransportGet, TransportGet>();
             //builder.Services.AddTransient<ITransportChang, TransportChang>();

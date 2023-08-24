@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using FluentValidation.Results;
 using FluentValidation;
 using CProASP.Validations;
+using CProASP.Interfaces.BaseInterfaces;
 
 namespace CProASP.Controllers
 {
@@ -19,15 +20,18 @@ namespace CProASP.Controllers
         private readonly ILogger<TransportGetAddController> _logger;
         private readonly ITransportService _transportService;
         private IValidator<BaseTransport> _validatorBase;
+        private IValidator<BaseTransportRequest> _validatorBaseReqest;
 
         public TransportGetAddController(
             ITransportService transportRegister,
             ILogger<TransportGetAddController> logger,
-            IValidator<BaseTransport> validator)
+            IValidator<BaseTransport> validator,
+            IValidator<BaseTransportRequest> validatorBaseReqest)
         {
             _transportService = transportRegister;
             _logger = logger;
             _validatorBase = validator;
+            _validatorBaseReqest = validatorBaseReqest;
         }
 
         [HttpPost("add")]
@@ -49,22 +53,19 @@ namespace CProASP.Controllers
 
         [HttpPut]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult/*<BaseTransportRequest>*/> ChangeTransport(int id, [FromBody] BaseTransportRequest baseTransportRequest)
+        public ActionResult<BaseTransportRequest> ChangeTransport(int id, [FromBody] BaseTransportRequest baseTransportRequest)
         {
-            //ValidationResult result = await _validator.ValidateAsync(baseTransportRequest);
+            ValidationResult results = _validatorBaseReqest.Validate(baseTransportRequest);
 
-
-            //if (!result.IsValid)
-            //{
-            //    result.AddToModelState(this.ModelState);
-
-            //    return ("Create", baseTransportRequest);
-            //}
+            if (!results.IsValid)
+            {
+                return BadRequest(results.Errors);
+            }
 
             bool check = _transportService.UpdateTransport(id, baseTransportRequest);
 
-            if(!check) { return BadRequest("Error!\n404"); }
-            
+            if (!check) { return BadRequest("Error!\n404"); }
+
             return RedirectToAction("Index");
         }
         //[HttpGet("Id")]
@@ -73,7 +74,7 @@ namespace CProASP.Controllers
         //    var transport = GetDateBase.ReadFile(id);
         //    if (transport == null) { return BadRequest("Error!\n404"); }
         //    _transportRegister.AddTransport(transport);
-        //    return Ok(/*_transportRegister.TransportCount()*/);
+        //    return Ok(/*_transportRegister.TransportCount());
         //}
 
 
