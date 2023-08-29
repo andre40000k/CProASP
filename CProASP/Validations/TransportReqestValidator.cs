@@ -11,6 +11,4 @@ namespace CProASP.Validations
             RuleFor(x => x.Weight).InclusiveBetween(10, 50);
         }
     }
-    {
-    }
 }

@@ -29,6 +29,11 @@ namespace CProASP.Repository
                 .FirstOrDefault(x => x.Id == id);
         }
 
+        public List<BaseTransport> GetTranspoert(BaseTransport baseTransport)
+        {
+            return _context.Transport.ToList();
+        }
+
         public void UpDate(BaseTransport baseTransport)
         {
             _context.Transport.Update(baseTransport);
