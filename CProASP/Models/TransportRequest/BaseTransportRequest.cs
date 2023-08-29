@@ -1,6 +1,8 @@
-﻿namespace CProASP.Transport
+﻿using CProASP.Transport.Cargo;
+
+namespace CProASP.Transport.TransportRequest
 {
-    public class BaseTransporRequest
+    public class BaseTransportRequest
     {
         public string Type { get; set; }
         public double Speed { get; set; }

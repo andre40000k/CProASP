@@ -1,19 +1,19 @@
 ﻿using CProASP.Interfaces.ServicesInterface;
-using CProASP.Transport;
+using CProASP.Transport.Transport;
+using CProASP.Transport.TransportRequest;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CProASP.Controllers
 {
+    // 
     [Route("api/[controller]")]
     [ApiController]
     public class TransportController : ControllerBase
     {
-        //public static List<BaseTransport> Transports { get; set; } = new List<BaseTransport> { };
-        //public static int samecheck = 0;
-
-        private readonly ITransportRegister _transportRegister;
+        private readonly ITransportService _transportRegister;
         private readonly ITransportChang _transportChang;
-        public TransportController(ITransportRegister transportRegister,
+
+        public TransportController(ITransportService transportRegister,
             ITransportChang transportChang)
         {
             _transportRegister = transportRegister;
@@ -26,7 +26,7 @@ namespace CProASP.Controllers
         {
             if (_transportChang.CountList() == 0) return NotFound(new { Code = 404, Date = "The list is empety" });
 
-            return Ok(new { Code = 200, Date = _transportRegister.GetTranspoert() });
+            return Ok(/*new { Code = 200, Date = _transportRegister.GetTranspoert() }*/);
         }
 
         [HttpGet("{id}")]
@@ -39,18 +39,18 @@ namespace CProASP.Controllers
             return Ok(obj);
         }
 
-        [HttpPost]
-        public ActionResult AddTransport([FromBody] BaseTransporRequest request)
-        {
-            var transport = new BaseTransport(100, request.Type,
-                request.Weight, request.Speed, request.Status);
+        //[HttpPost]
+        //public ActionResult AddTransport([FromBody] BaseTransporRequest request)
+        //{
+        //    var transport = new BaseTransport(100, request.Type,
+        //        request.Weight, request.Speed, request.Status);
 
-            _transportRegister.AddTransport(transport);
-            return new OkObjectResult(transport);
-        }
+        //    _transportRegister.AddTransport(transport);
+        //    return new OkObjectResult(transport);
+        //}
 
         [HttpPut("{id}")]
-        public ActionResult<BaseTransport?> ChangTransport(int id, [FromBody] BaseTransporRequest request)
+        public ActionResult<BaseTransport?> ChangTransport(int id, [FromBody] BaseTransportRequest request)
         {
             var changTransport = _transportRegister.GetTranspoert(id);
 
